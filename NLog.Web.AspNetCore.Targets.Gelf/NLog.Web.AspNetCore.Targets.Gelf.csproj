@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
+    <VersionPrefix>1.0.$(BuildNumber)</VersionPrefix>
+    <AssemblyTitle>NLog.Web.AspNetCore.Targets.Gelf</AssemblyTitle>
+    <Authors>Gökhan Gökalp</Authors>
+    <Owners>Gökhan Gökalp</Owners>
+    <PackageLicenseUrl>https://github.com/GokGokalp/NLog.Web.AspNetCore.Targets.Gelf/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/GokGokalp/NLog.Web.AspNetCore.Targets.Gelf</PackageProjectUrl>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Description>Gelf4NLog is an NLog target implementation to push log messages to GrayLog2.</Description>
+    <Copyright>Copyright 2017</Copyright>
+    <PackageTags>gelf,graylog2,nlog</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+  </ItemGroup>
+</Project>
