@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
     <VersionPrefix>1.0.$(BuildNumber)</VersionPrefix>
     <AssemblyTitle>NLog.Web.AspNetCore.Targets.Gelf</AssemblyTitle>
