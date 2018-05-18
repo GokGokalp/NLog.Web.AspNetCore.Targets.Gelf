@@ -1,6 +1,8 @@
 # NLog.Web.AspNetCore.Targets.Gelf
 Gelf4NLog is an [NLog] target implementation to push log messages to [GrayLog2]. It implements the [Gelf] specification and communicates with GrayLog server via UDP.
 
+[![NuGet version](https://badge.fury.io/nu/NLog.Web.AspNetCore.Targets.Gelf.svg)](https://badge.fury.io/nu/NLog.Web.AspNetCore.Targets.Gelf)
+
 ## History
 Code forked from https://github.com/2020Legal/NLog.Targets.Gelf which is a fork from https://github.com/akurdyukov/Gelf4NLog who forked the origonal code from https://github.com/seymen/Gelf4NLog
 
@@ -32,7 +34,12 @@ Here is a sample nlog.config configuration file for graylog:
   </extensions>
   <targets>
     <target xsi:type="File" name="debugFile" filename="C:\@Logs\${shortdate}-${level}-${applicationName}.txt" layout="${longdate}|${level:upperCase=true}|${logger}|${aspnet-Request-Method}|url: ${aspnet-Request-Url}${aspnet-Request-QueryString}|${message}" concurrentWrites="false" />
-    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" SendLastFormatParameter="true" />
+    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" SendLastFormatParameter="true">
+	
+	<!-- Optional parameters -->
+	<parameter name="param1" layout="${longdate}"/>
+	<parameter name="param2" layout="${callsite}"/>
+    </target>
   </targets>
   <rules>
     <logger name="*" minlevel="Debug" writeTo="debugFile, graylog" />
