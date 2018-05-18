@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
@@ -65,6 +66,16 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
             //Add any other interesting data to LogEventInfo properties
             logEventInfo.Properties.Add("LoggerName", logEventInfo.LoggerName);
+
+            // adding MappedDiagnosticsLogicalContext data
+            MappedDiagnosticsLogicalContext.GetNames()
+                .Select(n => (Name: n, Value: MappedDiagnosticsLogicalContext.GetObject(n)))
+                .ToList()
+                .ForEach(t =>
+                {
+                    if (!logEventInfo.Properties.ContainsKey(t.Name))
+                        logEventInfo.Properties.Add(t.Name, t.Value);
+                });
 
             //We will persist them "Additional Fields" according to Gelf spec
             foreach (var property in logEventInfo.Properties)
