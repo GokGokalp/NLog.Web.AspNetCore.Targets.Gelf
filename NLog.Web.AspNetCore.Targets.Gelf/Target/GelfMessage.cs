@@ -27,7 +27,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         public string ShortMessage { get; set; }
 
         [JsonProperty("timestamp")]
-        public DateTime Timestamp { get; set; }
+        public double Timestamp { get; set; }
 
         [JsonProperty("version")]
         public string Version { get; set; }

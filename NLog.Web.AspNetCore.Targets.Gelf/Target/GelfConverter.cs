@@ -48,7 +48,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
                                       Host = Dns.GetHostName(),
                                       ShortMessage = shortMessage,
                                       FullMessage = logEventMessage,
-                                      Timestamp = logEventInfo.TimeStamp,
+                                      Timestamp = new DateTimeOffset(logEventInfo.TimeStamp).ToUnixTimeMilliseconds() /1000.0,
                                       Level = GetSeverityLevel(logEventInfo.Level),
                                       //Spec says: facility must be set by the client to "GELF" if empty
                                       Facility = (string.IsNullOrEmpty(facility) ? "GELF" : facility),
