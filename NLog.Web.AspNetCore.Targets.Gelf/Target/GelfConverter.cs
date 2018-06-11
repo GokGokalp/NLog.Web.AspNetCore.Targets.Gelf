@@ -131,19 +131,15 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         /// <returns></returns>
         private static int GetSeverityLevel(LogLevel level)
         {
+            if (level == LogLevel.Trace)
+            {
+                return 7;
+            }
             if (level == LogLevel.Debug)
             {
                 return 7;
             }
-            if (level == LogLevel.Fatal)
-            {
-                return 2;
-            }
             if (level == LogLevel.Info)
-            {
-                return 6;
-            }
-            if (level == LogLevel.Trace)
             {
                 return 6;
             }
@@ -151,8 +147,16 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             {
                 return 4;
             }
+            if (level == LogLevel.Error)
+            {
+                return 3;
+            }
+            if (level == LogLevel.Fatal)
+            {
+                return 2;
+            }
 
-            return 3; //LogLevel.Error
+            return 7; //LogLevel.Off ?
         }
 
         /// <summary>
