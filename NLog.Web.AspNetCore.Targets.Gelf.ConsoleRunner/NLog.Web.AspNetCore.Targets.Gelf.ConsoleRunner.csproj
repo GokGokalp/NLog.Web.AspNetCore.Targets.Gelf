@@ -9,4 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\NLog.Web.AspNetCore.Targets.Gelf\NLog.Web.AspNetCore.Targets.Gelf.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

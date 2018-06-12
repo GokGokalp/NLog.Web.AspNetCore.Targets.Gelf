@@ -30,6 +30,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
                 logEventInfo.Properties.Add("ExceptionSource", logEventInfo.Exception.Source);
                 logEventInfo.Properties.Add("ExceptionMessage", exceptionDetail);
+                logEventInfo.Properties.Add("ExceptionType", logEventInfo.Exception?.GetType().FullName);
                 logEventInfo.Properties.Add("StackTrace", stackDetail);
             }
 
@@ -175,17 +176,28 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             int counter = 0;
             do
             {
-                exceptionSb.Append(nestedException.Message + " - ");
+                exceptionSb.Append(nestedException.GetType().FullName)
+                    .Append(" => ")
+                    .Append(nestedException.Message);
+
+                if(nestedException.InnerException != null)
+                    exceptionSb.Append(" - ");
+
                 if (nestedException.StackTrace != null)
-                    stackSb.Append(nestedException.StackTrace + "--- Inner exception stack trace ---");
+                {
+                    stackSb.Append(nestedException.StackTrace);
+                    if (nestedException.InnerException != null)
+                        stackSb.Append("--- Inner exception stack trace ---");
+                }
+
                 nestedException = nestedException.InnerException;
                 counter++;
             }
             while (nestedException != null && counter < 11);
 
-            exceptionDetail = exceptionSb.ToString().Substring(0, exceptionSb.Length - 3);
+            exceptionDetail = exceptionSb.ToString();
             if (stackSb.Length > 0)
-                stackDetail = stackSb.ToString().Substring(0, stackSb.Length - 35);
+                stackDetail = stackSb.ToString();
         }
     }
 }

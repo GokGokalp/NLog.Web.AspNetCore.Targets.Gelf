@@ -30,3 +30,4 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+/NLog.Web.AspNetCore.Targets.Gelf.ConsoleRunner/Logs/internal-nlog.txt
