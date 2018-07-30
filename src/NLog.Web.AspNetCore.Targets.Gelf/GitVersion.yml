@@ -1,0 +1,31 @@
+﻿branches:
+    master:
+        regex: master
+        mode: ContinuousDelivery
+        tag: ''
+        increment: Patch
+        prevent-increment-of-merged-branch-version: true
+        is-release-branch: false
+    dev:
+        regex: ^dev(elopment)?
+        increment: Minor
+        tag: dev
+        is-release-branch: false
+        mode: ContinuousDeployment
+    feature:
+        regex: ^feature[/]
+        increment: Patch
+        tag: useBranchName
+        is-release-branch: false
+        mode: ContinuousDeployment
+    release:
+        regex: ^release[/]
+        increment: Minor
+        tag: beta
+        is-release-branch: true
+    hotfix:
+        regex: ^hotfix[/]
+        increment: Patch
+        tag: beta
+        is-release-branch: false
+        mode: ContinuousDeployment
