@@ -34,7 +34,7 @@ Here is a sample nlog.config configuration file for graylog:
   </extensions>
   <targets>
     <target xsi:type="File" name="debugFile" filename="C:\@Logs\${shortdate}-${level}-${applicationName}.txt" layout="${longdate}|${level:upperCase=true}|${logger}|${aspnet-Request-Method}|url: ${aspnet-Request-Url}${aspnet-Request-QueryString}|${message}" concurrentWrites="false" />
-    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" SendLastFormatParameter="true">
+    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner"  maxUdpPackageSize="1491" SendLastFormatParameter="true">
 	
 	<!-- Optional parameters -->
 	<parameter name="param1" layout="${longdate}"/>
@@ -53,7 +53,7 @@ Options are the following:
 * __endpoint:__ the uri pointing to the graylog2 input in the format udp://{IP or host name}:{port} *__note:__ support is currently only for udp transport protocol*
 * __facility:__ The graylog2 facility to send log messages
 * __sendLastFormatParameter:__ default false. If true last parameter of message format will be sent to graylog as separate field per property
-
+* __ maxUdpPackageSize:__ Size of udp package sent to graylog. Useful when running .Net applications in docker because of (https://github.com/docker/for-win/issues/1144 "this bug")
 ###Code
 ```c#
 //excerpt from ConsoleRunner
