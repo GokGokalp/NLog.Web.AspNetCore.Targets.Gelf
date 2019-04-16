@@ -19,7 +19,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf.Tests
                 var transport = new UdpTransport(transportClient.Object);
                 var converter = new Mock<IConverter>();
                 var dnslookup = new Mock<DnsBase>();
-                converter.Setup(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>())).Returns(new JObject());
+                converter.Setup(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new JObject());
 
                 var target = new GelfTarget(new []{transport}, converter.Object, dnslookup.Object) {
                     Endpoint = "udp://192.168.99.100:12201"
@@ -30,7 +30,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf.Tests
                 target.WriteLogEventInfo(logEventInfo);
 
                 transportClient.Verify(t => t.Send(It.IsAny<byte[]>(), It.IsAny<Int32>(), It.IsAny<IPEndPoint>()), Times.Once());
-                converter.Verify(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>()), Times.Once());
+                converter.Verify(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
             }
 
             [Fact]
@@ -42,7 +42,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf.Tests
                 jsonObject.Add("full_message", JToken.FromObject(message));
 
                 var converter = new Mock<IConverter>();
-                converter.Setup(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>())).Returns(jsonObject).Verifiable();
+                converter.Setup(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>(), It.IsAny<string>())).Returns(jsonObject).Verifiable();
                 var transportClient = new Mock<ITransportClient>();
                 transportClient.Setup(t => t.Send(It.IsAny<byte[]>(), It.IsAny<Int32>(), It.IsAny<IPEndPoint>())).Verifiable();
                
@@ -54,7 +54,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf.Tests
                 };
                 target.WriteLogEventInfo(new LogEventInfo());
 
-                converter.Verify(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>()), Times.Once());
+                converter.Verify(c => c.GetGelfJson(It.IsAny<LogEventInfo>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
             }
         }
     }

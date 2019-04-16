@@ -37,6 +37,8 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
         public bool SendLastFormatParameter { get; set; }
 
+        public string GelfVersion { get; set; } = "1.0";
+
         public IConverter Converter { get; private set; }
         public IEnumerable<ITransport> Transports { get; private set; }
         public DnsBase Dns { get; private set; }
@@ -90,7 +92,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
                 logEvent.Properties.Add(ConverterConstants.PromoteObjectPropertiesMarker, logEvent.Parameters.Last());
             }
 
-            var jsonObject = Converter.GetGelfJson(logEvent, Facility);
+            var jsonObject = Converter.GetGelfJson(logEvent, Facility, GelfVersion);
             if (jsonObject == null) return;
             _lazyITransport.Value
                 .Send(_lazyIpEndoint.Value, jsonObject.ToString(Formatting.None, null));
