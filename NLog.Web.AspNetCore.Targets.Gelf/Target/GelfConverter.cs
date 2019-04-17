@@ -5,16 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using NLog;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf
 {
     public class GelfConverter : IConverter
     {
         private const int ShortMessageMaxLength = 250;
-        private const string GelfVersion = "1.0";
 
-        public JObject GetGelfJson(LogEventInfo logEventInfo, string facility)
+        public JObject GetGelfJson(LogEventInfo logEventInfo, string facility, string gelfVersion = "1.0")
         {
             //Retrieve the formatted message from LogEventInfo
             var logEventMessage = logEventInfo.FormattedMessage;
@@ -40,29 +38,52 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
                 shortMessage = shortMessage.Substring(0, ShortMessageMaxLength);
             }
 
-            //Construct the instance of GelfMessage
-            //See https://github.com/Graylog2/graylog2-docs/wiki/GELF "Specification (version 1.0)"
-            var gelfMessage = new GelfMessage
-                                  {
-                                      Version = GelfVersion,
-                                      Host = Dns.GetHostName(),
-                                      ShortMessage = shortMessage,
-                                      FullMessage = logEventMessage,
-                                      Timestamp = logEventInfo.TimeStamp,
-                                      Level = GetSeverityLevel(logEventInfo.Level),
-                                      //Spec says: facility must be set by the client to "GELF" if empty
-                                      Facility = (string.IsNullOrEmpty(facility) ? "GELF" : facility),
-                                      Line = (logEventInfo.UserStackFrame != null)
-                                                 ? logEventInfo.UserStackFrame.GetFileLineNumber().ToString(
-                                                     CultureInfo.InvariantCulture)
-                                                 : string.Empty,
-                                      File = (logEventInfo.UserStackFrame != null)
-                                                 ? logEventInfo.UserStackFrame.GetFileName()
-                                                 : string.Empty,
-                                  };
+            //Spec says: facility must be set by the client to "GELF" if empty
+            facility = (string.IsNullOrEmpty(facility) ? "GELF" : facility);
+            string line = (logEventInfo.UserStackFrame != null)
+                ? logEventInfo.UserStackFrame.GetFileLineNumber().ToString(
+                    CultureInfo.InvariantCulture)
+                : string.Empty;
+            string file = (logEventInfo.UserStackFrame != null)
+                ? logEventInfo.UserStackFrame.GetFileName()
+                : string.Empty;
 
-            //Convert to JSON
-            var jsonObject = JObject.FromObject(gelfMessage);
+            JObject jsonObject;
+
+            //Construct the instance of GelfMessage
+            //See http://docs.graylog.org/en/3.0/pages/gelf.html#gelf-payload-specification "Specification (version 1.1)"
+            if (gelfVersion == "1.1")
+            {
+                jsonObject = JObject.FromObject(new GelfMessageV1_1
+                {
+                    Version = gelfVersion,
+                    Host = Dns.GetHostName(),
+                    ShortMessage = shortMessage,
+                    FullMessage = logEventMessage,
+                    Timestamp = new DateTimeOffset(logEventInfo.TimeStamp).ToUnixTimeMilliseconds() /1000.0,
+                    Level = GetSeverityLevel(logEventInfo.Level),
+                });
+
+                //Spec says: facility, line and file fields are deprecated and should be sent as additional fields
+                logEventInfo.Properties.Add("facility", facility);
+                logEventInfo.Properties.Add("line", line);
+                logEventInfo.Properties.Add("file", file);
+            }
+            else
+            {
+                jsonObject = JObject.FromObject(new GelfMessage
+                {
+                    Version = gelfVersion,
+                    Host = Dns.GetHostName(),
+                    ShortMessage = shortMessage,
+                    FullMessage = logEventMessage,
+                    Timestamp = logEventInfo.TimeStamp,
+                    Level = GetSeverityLevel(logEventInfo.Level),
+                    Facility = facility,
+                    Line = line,
+                    File = file,
+                });
+            }
 
             //Add any other interesting data to LogEventInfo properties
             logEventInfo.Properties.Add("LoggerName", logEventInfo.LoggerName);
