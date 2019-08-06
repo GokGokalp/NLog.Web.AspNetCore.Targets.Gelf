@@ -135,7 +135,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             var bitArray = new BitArray(64);
 
             //Read the server ip address
-            var ipAddresses = Dns.GetHostAddressesAsync(Dns.GetHostName()).Result;
+            var ipAddresses = Dns.GetHostAddresses(Dns.GetHostName());
             var ipAddress =
                 (from ip in ipAddresses where ip.AddressFamily == AddressFamily.InterNetwork select ip).FirstOrDefault();
 

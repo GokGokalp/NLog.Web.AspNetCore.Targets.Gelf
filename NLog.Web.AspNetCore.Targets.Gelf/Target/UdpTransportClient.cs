@@ -9,7 +9,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         {
             using (var udpClient = new UdpClient())
             {
-                int result = udpClient.SendAsync(datagram, bytes, ipEndPoint).Result;
+                int result = udpClient.Send(datagram, bytes, ipEndPoint);
             }
         }
     }
