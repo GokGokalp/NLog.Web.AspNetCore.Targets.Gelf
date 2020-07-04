@@ -36,7 +36,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             var ipAddress = IPAddress.Parse(serverIpAddress);
             var ipEndPoint = new IPEndPoint(ipAddress, serverPort);
 
-           Send(ipEndPoint, message);
+            Send(ipEndPoint, message);
         }
 
         /// <summary>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using NLog;
-using NLog.Config;
+﻿using NLog.Config;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf.ConsoleRunner
 {

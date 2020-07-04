@@ -1,13 +1,12 @@
-using NLog;
-using NLog.Targets;
 using Newtonsoft.Json;
 using NLog.Config;
-using System.Collections.Generic;
+using NLog.Targets;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.ComponentModel.DataAnnotations;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf
 {
@@ -23,7 +22,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         public string Endpoint
         {
             get { return _endpoint.ToString(); }
-            set {  _endpoint = value != null ? new Uri(Environment.ExpandEnvironmentVariables(value)) : null; }
+            set { _endpoint = value != null ? new Uri(Environment.ExpandEnvironmentVariables(value)) : null; }
         }
 
         [ArrayParameter(typeof(GelfParameterInfo), "parameter")]
@@ -43,9 +42,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         public IEnumerable<ITransport> Transports { get; private set; }
         public DnsBase Dns { get; private set; }
 
-        public GelfTarget() : this(new[]{new UdpTransport(new UdpTransportClient())}, 
-            new GelfConverter(), 
-            new DnsWrapper())
+        public GelfTarget() : this(new[] { new UdpTransport(new UdpTransportClient()) }, new GelfConverter(), new DnsWrapper())
         {
         }
 
@@ -94,8 +91,8 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
             var jsonObject = Converter.GetGelfJson(logEvent, Facility, GelfVersion);
             if (jsonObject == null) return;
-            _lazyITransport.Value
-                .Send(_lazyIpEndoint.Value, jsonObject.ToString(Formatting.None, null));
+
+            _lazyITransport.Value.Send(_lazyIpEndoint.Value, jsonObject.ToString(Formatting.None, null));
         }
     }
 }

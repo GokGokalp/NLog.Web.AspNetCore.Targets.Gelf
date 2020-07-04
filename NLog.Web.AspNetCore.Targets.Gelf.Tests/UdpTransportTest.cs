@@ -1,10 +1,9 @@
-using System;
-using Xunit;
-using NLog.Web.AspNetCore.Targets.Gelf;
 using Moq;
 using Newtonsoft.Json.Linq;
-using System.Net;
 using NLog.Web.AspNetCore.Targets.Gelf.Tests.Resources;
+using System;
+using System.Net;
+using Xunit;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf.Tests
 {
