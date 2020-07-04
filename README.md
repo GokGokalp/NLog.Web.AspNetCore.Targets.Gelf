@@ -34,7 +34,7 @@ Here is a sample nlog.config configuration file for graylog:
   </extensions>
   <targets>
     <target xsi:type="File" name="debugFile" filename="C:\@Logs\${shortdate}-${level}-${applicationName}.txt" layout="${longdate}|${level:upperCase=true}|${logger}|${aspnet-Request-Method}|url: ${aspnet-Request-Url}${aspnet-Request-QueryString}|${message}" concurrentWrites="false" />
-    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" SendLastFormatParameter="true" gelfVersion="1.0">
+    <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" sendLastFormatParameter="true" gelfVersion="1.1">
 	
 	<!-- Optional parameters -->
 	<parameter name="param1" layout="${longdate}"/>

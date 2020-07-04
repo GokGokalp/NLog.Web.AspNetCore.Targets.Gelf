@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf
