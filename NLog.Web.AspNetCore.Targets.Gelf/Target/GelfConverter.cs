@@ -22,7 +22,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             if (logEventInfo.Exception != null)
             {
                 string exceptionDetail;
-                string stackDetail; 
+                string stackDetail;
 
                 GetExceptionMessages(logEventInfo.Exception, out exceptionDetail, out stackDetail);
 
@@ -41,8 +41,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             //Spec says: facility must be set by the client to "GELF" if empty
             facility = (string.IsNullOrEmpty(facility) ? "GELF" : facility);
             string line = (logEventInfo.UserStackFrame != null)
-                ? logEventInfo.UserStackFrame.GetFileLineNumber().ToString(
-                    CultureInfo.InvariantCulture)
+                ? logEventInfo.UserStackFrame.GetFileLineNumber().ToString(CultureInfo.InvariantCulture)
                 : string.Empty;
             string file = (logEventInfo.UserStackFrame != null)
                 ? logEventInfo.UserStackFrame.GetFileName()
@@ -60,7 +59,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
                     Host = Dns.GetHostName(),
                     ShortMessage = shortMessage,
                     FullMessage = logEventMessage,
-                    Timestamp = new DateTimeOffset(logEventInfo.TimeStamp).ToUnixTimeMilliseconds() /1000.0,
+                    Timestamp = new DateTimeOffset(logEventInfo.TimeStamp).ToUnixTimeMilliseconds() / 1000.0,
                     Level = GetSeverityLevel(logEventInfo.Level),
                 });
 
@@ -109,7 +108,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
         private static void AddAdditionalField(IDictionary<string, JToken> jObject, KeyValuePair<object, object> property)
         {
-            if(property.Key == ConverterConstants.PromoteObjectPropertiesMarker)
+            if (property.Key == ConverterConstants.PromoteObjectPropertiesMarker)
             {
                 if (property.Value != null && property.Value is object)
                 {
@@ -139,7 +138,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
                 key = "_" + key;
 
             JToken value = null;
-            if(property.Value != null)
+            if (property.Value != null)
                 value = JToken.FromObject(property.Value);
 
             jObject.Add(key, value);
@@ -166,7 +165,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             }
             if (level == LogLevel.Trace)
             {
-                return 6;
+                return 7;
             }
             if (level == LogLevel.Warn)
             {

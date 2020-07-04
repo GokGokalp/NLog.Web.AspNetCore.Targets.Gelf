@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NLog.Config;
 using NLog.Layouts;
 
@@ -10,8 +6,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
     [NLogConfigurationItem]
     public class GelfParameterInfo
     {
-         public GelfParameterInfo()
-            : this(null, null)
+        public GelfParameterInfo() : this(null, null)
         {
         }
 
@@ -20,25 +15,25 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterLayout">The parameter layout.</param>
-         public GelfParameterInfo(string parameterName, Layout parameterLayout)
+        public GelfParameterInfo(string parameterName, Layout parameterLayout)
         {
             this.Name = parameterName;
             this.Layout = parameterLayout;
         }
 
-         /// <summary>
-         /// Gets or sets the database parameter name.
-         /// </summary>
-         /// <docgen category='Parameter Options' order='10' />
-         [RequiredParameter]
-         public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the database parameter name.
+        /// </summary>
+        /// <docgen category='Parameter Options' order='10' />
+        [RequiredParameter]
+        public string Name { get; set; }
 
-         /// <summary>
-         /// Gets or sets the layout that should be use to calcuate the value for the parameter.
-         /// </summary>
-         /// <docgen category='Parameter Options' order='10' />
-         [RequiredParameter]
-         public Layout Layout { get; set; }
+        /// <summary>
+        /// Gets or sets the layout that should be use to calcuate the value for the parameter.
+        /// </summary>
+        /// <docgen category='Parameter Options' order='10' />
+        [RequiredParameter]
+        public Layout Layout { get; set; }
 
     }
 }
