@@ -18,7 +18,8 @@ $ dotnet add package NLog.Web.AspNetCore.Targets.Gelf
 ```
 $ dotnet add package NLog.Web.AspNetCore.Targets.Gelf
 ```
-### Configuration
+### Configuration (nlog.config)
+
 Here is a sample nlog.config configuration file for graylog:
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
@@ -37,8 +38,10 @@ Here is a sample nlog.config configuration file for graylog:
     <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" sendLastFormatParameter="true" gelfVersion="1.1">
 	
 	<!-- Optional parameters -->
-	<parameter name="param1" layout="${longdate}"/>
-	<parameter name="param2" layout="${callsite}"/>
+	<parameter name="timestamp" layout="${longdate}"/>
+	<parameter name="callsite" layout="${callsite} - Line:${callsite-linenumber}"/>
+	<parameter name="requestMethod" layout="${aspnet--request-method}"/>
+
     </target>
   </targets>
   <rules>
@@ -55,7 +58,43 @@ Options are the following:
 * __sendLastFormatParameter:__ default false. If true last parameter of message format will be sent to graylog as separate field per property
 * __gelfVersion:__ default "1.0". Set this to "1.1" in order to use actual GELF message format
 
-###Code
+### Configuration (appsetting.json)
+
+Configuration can be put in appsettings.json, and can include parameters
+
+```json
+{
+  "NLog": {
+    "throwExceptions": false,
+    "extensions": [
+      {"assembly": "NLog.Web.AspNetCore"}
+      {"assembly": "NLog.Web.AspNetCore.Targets.Gelf"}
+    ],
+    "targets": {
+      "graylog": {
+        "type": "gelf",
+        "endpoint": "udp://192.168.99.100:12201",
+        "facility": "console-runner",
+        "paramters": [
+          {"name": "param1", "layout": "${longdate}"},
+          {"name": "callsite", "layout": "${callsite} - Line:${callsite-linenumber}"},
+          {"name": "requestMethod", "layout": "${aspnet--request-method}"}
+        ]
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Debug",
+        "writeTo": "graylog"
+      }
+    ]
+  }
+}
+```
+
+
+### Code
 ```c#
 //excerpt from ConsoleRunner
 var eventInfo = new LogEventInfo
