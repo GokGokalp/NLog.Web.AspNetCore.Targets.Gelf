@@ -38,7 +38,7 @@ Here is a sample nlog.config configuration file for graylog:
     <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" sendLastFormatParameter="true" gelfVersion="1.1">
 	
 	<!-- Optional parameters -->
-	<parameter name="timestamp" layout="${longdate}"/>
+	<parameter name="param1" layout="${longdate}"/>
 	<parameter name="callsite" layout="${callsite} - Line:${callsite-linenumber}"/>
 	<parameter name="requestMethod" layout="${aspnet--request-method}"/>
 
