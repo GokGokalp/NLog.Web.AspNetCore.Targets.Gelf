@@ -38,7 +38,7 @@ Here is a sample nlog.config configuration file for graylog:
     <target xsi:type="Gelf" name="graylog" endpoint="udp://192.168.99.100:12201" facility="console-runner" sendLastFormatParameter="true" gelfVersion="1.1">
 	
 	<!-- Optional parameters -->
-	<parameter name="param1" layout="${longdate}"/>
+	<parameter name="timestamp" layout="${longdate}"/>
 	<parameter name="callsite" layout="${callsite} - Line:${callsite-linenumber}"/>
 	<parameter name="requestMethod" layout="${aspnet--request-method}"/>
 
@@ -70,17 +70,15 @@ Configuration can be put in appsettings.json, and can include parameters
       {"assembly": "NLog.Web.AspNetCore"}
       {"assembly": "NLog.Web.AspNetCore.Targets.Gelf"}
     ],
-    "targets": {
-      "graylog": {
-        "type": "gelf",
-        "endpoint": "udp://192.168.99.100:12201",
-        "facility": "console-runner",
-        "paramters": [
-          {"name": "param1", "layout": "${longdate}"},
-          {"name": "callsite", "layout": "${callsite} - Line:${callsite-linenumber}"},
-          {"name": "requestMethod", "layout": "${aspnet--request-method}"}
-        ]
-      }
+    "graylog": {
+      "type": "gelf",
+      "endpoint": "udp://192.168.99.100:12201",
+      "facility": "console-runner",
+      "paramters": [
+        {"name": "param1", "layout": "${longdate}"},
+        {"name": "callsite", "layout": "${callsite} - Line:${callsite-linenumber}"},
+        {"name": "requestMethod", "layout": "${aspnet--request-method}"}
+      ]
     },
     "rules": [
       {
@@ -92,6 +90,8 @@ Configuration can be put in appsettings.json, and can include parameters
   }
 }
 ```
+
+
 
 
 ### Code
