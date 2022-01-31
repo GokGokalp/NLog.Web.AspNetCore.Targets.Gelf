@@ -195,11 +195,6 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             }
         }
 
-        void ITransport.Send(IPEndPoint target, string message)
-        {
-            throw new NotImplementedException();
-        }
-
         public string Scheme
         {
             get { return "udp"; }
