@@ -12,6 +12,8 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 {
     public class UdpTransport : ITransport
     {
+        public GelfTarget Target { get; set; }
+
         //UDP datagrams are limited to a size of 8192 bytes.
         private const int MaxMessageSizeInUdp = 8192;
         //Chunk also contains 12 byte prefix, so 8192 - 12.

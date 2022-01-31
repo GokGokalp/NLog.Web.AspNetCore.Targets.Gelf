@@ -4,9 +4,12 @@ using NLog.Targets;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace NLog.Web.AspNetCore.Targets.Gelf
 {
@@ -38,11 +41,21 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
 
         public string GelfVersion { get; set; } = "1.0";
 
+        public string ClientCertificate { get; set; }
+
+        public string ClientCertificatePassword { get; set; }
+
+        public bool IgnoreTlsErrors { get; set; }
+
+        public bool UseTls { get; set; }
+
         public IConverter Converter { get; private set; }
         public IEnumerable<ITransport> Transports { get; private set; }
         public DnsBase Dns { get; private set; }
 
-        public GelfTarget() : this(new[] { new UdpTransport(new UdpTransportClient()) }, new GelfConverter(), new DnsWrapper())
+        public X509Certificate2 X509Certificate { get; private set; }
+
+        public GelfTarget() : this(new ITransport[] { new UdpTransport(new UdpTransportClient()), new TcpTransport(new TcpTransportClient()) }, new GelfConverter(), new DnsWrapper())
         {
         }
 
@@ -61,8 +74,47 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             });
             _lazyITransport = new Lazy<ITransport>(() =>
             {
-                return Transports.Single(x => x.Scheme.ToUpper() == _endpoint.Scheme.ToUpper());
+                var transport = Transports.Single(x => x.Scheme.ToUpper() == _endpoint.Scheme.ToUpper());
+                transport.Target = this;
+                if (transport.Scheme.Equals("tcp", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if (!String.IsNullOrEmpty(ClientCertificate))
+                        LoadClientCertificate();
+
+                    if (transport is TcpTransport transportProvider)
+                        transportProvider.SetTransportClient(new TcpTransportClient(UseTls, IgnoreTlsErrors, ((X509Certificate != null) ? new X509Certificate2Collection(X509Certificate) : null)));
+                }
+
+                return transport;
             });
+        }
+
+        /// <summary>
+        /// Load Client Certificate for mTLS TCP connection
+        /// </summary>
+        /// <exception cref="ArgumentException">Somthing wrong with ClientCertificate parameter</exception>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="System.Security.Cryptography.CryptographicException"></exception>
+        public void LoadClientCertificate()
+        {
+            X509Certificate2 clientCertificate = null;
+            if (ClientCertificate?.StartsWith("file:") ?? false)
+            {
+                clientCertificate = new X509Certificate2(ClientCertificate.Replace("file:", string.Empty), ClientCertificatePassword);
+            }
+            else if (ClientCertificate?.StartsWith("base64:") ?? false)
+            {
+                var cert = new X509Certificate2(Convert.FromBase64String(ClientCertificate.Replace("base64:", string.Empty)), ClientCertificatePassword);
+                clientCertificate = cert;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid Client Certificate path", nameof(this.ClientCertificate));
+            }
+            if (clientCertificate == null)
+                throw new Exception("Failed to load certificate");
+
+            X509Certificate = clientCertificate;
         }
 
         public void WriteLogEventInfo(LogEventInfo logEvent)
