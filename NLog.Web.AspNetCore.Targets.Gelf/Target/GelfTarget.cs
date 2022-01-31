@@ -76,10 +76,13 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             {
                 var transport = Transports.Single(x => x.Scheme.ToUpper() == _endpoint.Scheme.ToUpper());
                 transport.Target = this;
-                if(transport.Scheme.Equals("tcp", StringComparison.InvariantCultureIgnoreCase))
+                if (transport.Scheme.Equals("tcp", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if(!String.IsNullOrEmpty(ClientCertificate))
+                    if (!String.IsNullOrEmpty(ClientCertificate))
                         LoadClientCertificate();
+
+                    if (transport is TcpTransport transportProvider)
+                        transportProvider.SetTransportClient(new TcpTransportClient(UseTls, IgnoreTlsErrors, ((X509Certificate != null) ? new X509Certificate2Collection(X509Certificate) : null)));
                 }
 
                 return transport;
@@ -97,12 +100,11 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             X509Certificate2 clientCertificate = null;
             if (ClientCertificate?.StartsWith("file:") ?? false)
             {
-                clientCertificate = new X509Certificate2(ClientCertificate.Replace("file:", string.Empty).Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar), ClientCertificatePassword);
+                clientCertificate = new X509Certificate2(ClientCertificate.Replace("file:", string.Empty), ClientCertificatePassword);
             }
             else if (ClientCertificate?.StartsWith("base64:") ?? false)
             {
-                var cert = new X509Certificate2();
-                cert.Import(Encoding.UTF8.GetBytes(ClientCertificate.Replace("base64", string.Empty)), ClientCertificatePassword, X509KeyStorageFlags.Exportable);
+                var cert = new X509Certificate2(Convert.FromBase64String(ClientCertificate.Replace("base64:", string.Empty)), ClientCertificatePassword);
                 clientCertificate = cert;
             }
             else

@@ -14,10 +14,15 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
     {
         public GelfTarget Target { get; set; }
 
-        private readonly ITransportClient _transportClient;
+        private ITransportClient _transportClient;
         public TcpTransport(ITransportClient transportClient)
         {
             _transportClient = transportClient;
+        }
+
+        public void SetTransportClient(ITransportClient client)
+        {
+            _transportClient = client;
         }
 
         /// <summary>
@@ -44,7 +49,7 @@ namespace NLog.Web.AspNetCore.Targets.Gelf
             var ipEndPoint = target;
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
-            _transportClient.Send(messageBytes, messageBytes.Length, ipEndPoint, Target.UseTls);
+            _transportClient.Send(messageBytes, messageBytes.Length, ipEndPoint);
         }
 
         /// <summary>
